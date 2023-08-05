@@ -3,6 +3,7 @@ from fastapi import FastAPI, HTTPException, Request, status, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
+import os
 import torch
 import uvicorn
 from utils import torch_gc
@@ -19,13 +20,16 @@ class RateBody(BaseModel):
 
 def rate_article(question,content):
     try:
-        inputs = tokenizer(question, content, return_tensors='pt').to(device)
+        inputs = tokenizer(question, content[0:1000], return_tensors='pt').to(device)
+        print("debug question")
+        print(question)
+        print("debug content")
+        print(content)
         score = rank_model(**inputs).logits[0].detach()
         return score.item()
     except Exception as e:
-        print(traceback.format_exc())
         print('文章打分出错')
-        return 0
+        return -1
 
 
 app = FastAPI()

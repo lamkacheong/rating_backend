@@ -41,6 +41,8 @@ async def rate(body: RateBody, request: Request, background_tasks: BackgroundTas
     background_tasks.add_task(torch_gc) 
     rate = rate_article(body.question, body.content)
     content = {"rate": rate}
+    print('此文章分数:')
+    print(rate)
     return JSONResponse(status_code=200, content=content)
 
 
